@@ -6,17 +6,6 @@ const X_SIZE_MAP: usize = 30;
 const Y_SIZE_MAP: usize = 12;
 const NUMBER_GHOST: usize = 4;
 
-fn init() {
-    let mut ghosts: Vec<Ghost> = vec![];
-    let pacman: Pacman = Pacman {
-        is_hit: false,
-        x: 0,
-        y: 0,
-        face: '🟡',
-    };
-    let map = create_map();
-    spawn_pacman_and_ghosts(pacman, ghosts, map)
-}
 
 fn create_map() -> Vec<Vec<char>> {
     let mut map: Vec<Vec<char>> = vec![vec!['#'; X_SIZE_MAP]; Y_SIZE_MAP];
@@ -56,17 +45,17 @@ fn create_map_pattern(map: &mut Vec<Vec<char>>) {
     }
 }
 
-fn spawn_pacman_and_ghosts(pacman: Pacman, mut ghosts: Vec<Ghost>, mut map: Vec<Vec<char>>) {
-    *map[*pacman.x][*pacman.y] = *pacman.face;
-    for i in 0..NUMBER_GHOST {
+fn spawn_pacman_and_ghosts(pacman: Pacman, ghosts: &mut Vec<Ghost>, map: &mut Vec<Vec<char>>) {
+    map[pacman.y][pacman.x] = pacman.face;
+    for _i in 0..NUMBER_GHOST {
         let ghost = Ghost {
             is_hit: false,
             x: 0,
             y: 0,
             face: '👻',
         };
-        &map[&ghost.y][&ghost.x] = &ghost.face;
-        &ghosts.push(ghost)
+        map[ghost.y][ghost.x] = ghost.face;
+        ghosts.push(ghost)
     }
 }
 
@@ -85,7 +74,15 @@ pub struct Pacman {
 }
 
 fn main() {
-    let map = create_map();
+    let mut ghosts: Vec<Ghost> = vec![];
+    let pacman: Pacman = Pacman {
+        is_hit: false,
+        x: (X_SIZE_MAP / 2) - 1,
+        y: (Y_SIZE_MAP / 2),
+        face: '🟡',
+    };
+    let mut map = create_map();
+    spawn_pacman_and_ghosts(pacman, &mut ghosts, &mut map);
     let is_game_done: bool = false;
     let device_state = DeviceState::new();
     let mut keys: Vec<Keycode>;
